@@ -12,10 +12,12 @@ We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system wi
 ## How to use PP-Vul
 
 ### 1. Dataset pre-processing
-- The raw dataset used in this project can be found at: https://github.com/CGCL-codes/VulCNN/tree/main/dataset
+- The raw dataset of VulCNN can be found at: https://github.com/CGCL-codes/VulCNN/tree/main/dataset
+- The raw dataset of BigVul can be found at: https://github.com/ZeoVan/MSR_20_Code_vulnerability_CSV_Dataset
+- The raw dataset of PrimeVul can be found at: https://github.com/DLVulDet/PrimeVul
 - Normalization code can be found at: https://github.com/CGCL-codes/VulCNN/blob/main/normalization.py
-- For convenience, the preprocessed dataset can be found at: https://drive.usercontent.google.com/download?id=1NGslBtKLA1gUex4tjNWbF01O3sFLSHPD&export=download&authuser=1
-- If you are using the preprocessed dataset, this part can be skipped.
+- For convenience, the preprocessed dataset of VulCNN can be found at: https://drive.usercontent.google.com/download?id=1NGslBtKLA1gUex4tjNWbF01O3sFLSHPD&export=download&authuser=1
+- If you are using the preprocessed dataset, *Dataset pre-precessing* can be skipped.
   
 #### 1.1. Normalization
 
@@ -35,13 +37,13 @@ python normalization.py -i ../dataset/rawdata
 - Move to *preprocessing* folder.
 
 ```python
-python codet5embedding.py -i ../dataset/normalized/Vul -o ../dataset/embedding/2_line/Vul -n 2
-python codet5embedding.py -i ../dataset/normalized/No-Vul -o ../dataset/embedding/2_line/No-Vul -n 2
+python codet5embedding.py -i ../dataset/normalized/Vul -o ../dataset/embedding/1_line/Vul -n 1
+python codet5embedding.py -i ../dataset/normalized/No-Vul -o ../dataset/embedding/1_line/No-Vul -n 1
 ```
 #### 1.3. Split dataset (train:valid:test=7:2:1)
 
 ```python
-python split_data.py -i ../dataset/embedding -o ../dataset/2_line 
+python split_data.py -i ../dataset/embedding -o ../dataset/1_line 
 ```
 ### 2. PP-Vul
 
@@ -51,13 +53,13 @@ python split_data.py -i ../dataset/embedding -o ../dataset/2_line
 - Move to *pp-vul* folder.
 
 ```python
-python classifier.py -i ../dataset/2_line 
+python classifier.py -i ../dataset/1_line 
 ```
 
 #### 2.2. Inference using homomorphic encrytion
 
 ```python
-python main.py -i ../dataset/2_line 
+python main.py -i ../dataset/1_line 
 ```
 
 ### 3. Plaintext model
