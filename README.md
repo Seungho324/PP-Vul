@@ -1,4 +1,4 @@
-# PP-Vul: Privacy-Preserving Vulnerability Detection via CNN Using Homomorphic Encryption
+# PP-Vul: Privacy-Preserving Vulnerability Detection Using Homomorphic Encryption
 
 This repository contains the implementation of *PP-Vul*.
 
