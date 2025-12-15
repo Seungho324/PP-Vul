@@ -39,7 +39,7 @@ def main():
     model = CNN(hidden_size = HIDDEN_SIZE)
     model = torch.load(root_dir + '/pp-vul_16_4_x^3.pth', map_location=device)
     
-    context = Context(N = 2**14, depth = 5, LogQ = 40, LogP = 60)
+    context = Context(N = 2**15, depth = 5, LogQ = 40, LogP = 60)
     embedding_size = Cuboid(1, MAX_LEN, HIDDEN_SIZE)
 
     HE_vul = HE_CNN(model, embedding_size, context)

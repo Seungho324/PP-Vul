@@ -1,5 +1,5 @@
 from seal import *
-from pp_vul.constants import *
+# from pp_vul.constants import *
 
 class Context:
     def _get_params(self, poly_modulus_degree, coeff_modulus):
@@ -18,12 +18,12 @@ class Context:
         self.galois_key = keygen.create_galois_keys()
         self.relin_keys = keygen.create_relin_keys()
     
-    def __init__(self, N = NUMBER_OF_SLOTS, depth = DEPTH, LogQ = FRACTION_SCALE, LogP = INTEGER_SCALE + FRACTION_SCALE, scale = 0):
+    def __init__(self, N, depth, LogQ, LogP, scale = 0):
         """Initialize for context"""
         coeff_modulus = [LogP] + [LogQ] * depth + [LogP]
-        context = SEALContext(self._get_params(N * 2, coeff_modulus))
+        context = SEALContext(self._get_params(N, coeff_modulus))
 
-        self.number_of_slots = N
+        self.number_of_slots = N // 2
         self.depth = depth
         if scale == 0:
             scale = 2**LogQ
