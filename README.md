@@ -3,9 +3,9 @@
 This repository contains the implementation of *PP-Vul*.
 
 ## Requirements
-We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python3.9
+We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python
 
-- Python 3.9
+- Python 3.10
 - SEAL-Python 4.0 (https://github.com/Huelse/SEAL-Python)
 - PyTorch
 
@@ -50,6 +50,7 @@ python split_data.py -i ../dataset/embedding -o ../dataset/1_line
 #### 2.1. Model training (HE-friendly)
 
 - Default model: Kernel height = 4, Number of filters = 16, Activation function = $x^3$, Depthwise convolution
+- Move to *pp-vul* folder.
 
 ```python
 python classifier.py -i ../dataset/1_line 
