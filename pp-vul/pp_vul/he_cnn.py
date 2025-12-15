@@ -1,6 +1,5 @@
 from .layers import *
 from .utils import *
-from .constants import *
 
 import torch
 import math
@@ -40,12 +39,6 @@ class HE_CNN(torch.nn.Module):
             elif layer.__class__.__name__ == 'ApproxReLU':
                 req_depth += 2
                 _const = 1
-
-            # elif layer.__class__.__name__ == 'Flatten':
-            #     if Out.w != 1 or _const != 1:
-            #         req_depth += 1
-            #     if Out.h != 1:
-            #         req_depth += 1
 
             elif layer.__class__.__name__ == 'Linear':
                 req_depth += 1
@@ -118,7 +111,7 @@ class HE_CNN(torch.nn.Module):
 
             elif layer.__class__.__name__ == 'Conv2d':
                 if (layer_params.groups == 1):
-                    Out = conv2d_layer_converter_tmp(
+                    Out = conv2d_layer_converter(
                         self.context, Out, self.Img, layer_params, self.data_size
                     )
                 else:
@@ -130,7 +123,7 @@ class HE_CNN(torch.nn.Module):
                 Out.ciphertexts = cube(self.context, Out.ciphertexts)
 
             elif layer.__class__.__name__ == 'Linear':
-                Out.ciphertexts = fc_layer_converter_tmp(self.context, Out.ciphertexts, layer_params)
+                Out.ciphertexts = fc_layer_converter(self.context, Out.ciphertexts, layer_params)
 
             if _time:
                 CHECK_TIME.append(time.time())

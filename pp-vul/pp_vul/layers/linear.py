@@ -112,7 +112,7 @@ from pp_vul.utils.context import Context
 #     context.evaluator.mod_switch_to_inplace(sss, all_addition.parms_id())
 #     return context.evaluator.add_plain(all_addition, sss)
 
-def fc_layer_converter_tmp(context: Context, C_in, layer):
+def fc_layer_converter(context: Context, C_in, layer):
     CH_in   = layer.in_features
     CH_out  = layer.out_features
 
