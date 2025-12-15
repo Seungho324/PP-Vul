@@ -37,7 +37,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     model = CNN(hidden_size = HIDDEN_SIZE)
-    model = torch.load(root_dir + '/model/pp-vul_16_4_x^3.pth', map_location=device)
+    model = torch.load(root_dir + '/pp-vul_16_4_x^3.pth', map_location=device)
     
     context = Context(N = 2**14, depth = 5, LogQ = 40, LogP = 60)
     embedding_size = Cuboid(1, MAX_LEN, HIDDEN_SIZE)
@@ -70,26 +70,26 @@ def main():
 
         result_decrypted = HE_vul.decrypt(result_ciphertext)[:2]
 
-        # print("Plaintext result:", result)
-        # print("Ciphertext result:", result_decrypted)
+        print("Plaintext result:", result)
+        print("Ciphertext result:", result_decrypted)
         
-        # result_1 = 3
-        # result_2 = 3
-        # if (result[0] > result[1]):
-        #     result_1 = 0
-        # else:
-        #     result_1 = 1
-        # if (result_decrypted[0] > result_decrypted[1]):
-        #     result_2 = 0
-        # else:
-        #     result_2 = 1
-        # print("Plaintext result:", result_1)
-        # print("Ciphertext result:", result_2)
+        result_1 = 3
+        result_2 = 3
+        if (result[0] > result[1]):
+            result_1 = 0
+        else:
+            result_1 = 1
+        if (result_decrypted[0] > result_decrypted[1]):
+            result_2 = 0
+        else:
+            result_2 = 1
+        print("Plaintext result:", result_1)
+        print("Ciphertext result:", result_2)
         
-        # if result_1 == result_2:
-        #     print("True")
-        # else:
-        #     print("False")
+        if result_1 == result_2:
+            print("True")
+        else:
+            print("False")
     
 
 if __name__ == "__main__":

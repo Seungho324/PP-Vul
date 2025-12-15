@@ -33,13 +33,8 @@ def get_accuracy(labels, prediction):
 def get_score(labels, predictions):
     accuracy = get_accuracy(labels, predictions)
     precision, recall, f_score, support = precision_recall_fscore_support(labels, predictions, average='macro')
-    tn, fp, fn, tp = confusion_matrix(labels, predictions).ravel()
-    tpr = tp / (tp + fn)
-    tnr = tn / (tn + fp)
     f1 = 2 * precision * recall / (precision + recall)
     return {
-        "TPR": format(tpr * 100, '.3f'),
-        "TNR": format(tnr * 100, '.3f'),
         "Pre": format(precision * 100, '.3f'),
         "Rec": format(recall * 100, '.3f'),        
         "F1" : format(f1 * 100, '.3f'),
@@ -100,7 +95,7 @@ class CNN(nn.Module):
         return out
 
 class CNN_Classifier():
-    def __init__(self, max_len=64, n_classes=2, epochs=100, batch_size=32, learning_rate = 0.001, hidden_size = 256):
+    def __init__(self, max_len=64, n_classes=2, epochs=100, batch_size=32, learning_rate = 0.001, hidden_size = 256, best_model_path='./pp-vul_16_4_x^3.pth'):
         self.model = CNN(hidden_size)
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.max_len = max_len
@@ -108,14 +103,18 @@ class CNN_Classifier():
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.model.to(self.device)
-        self.hidden_size = hidden_size
+        self.hidden_size = hidden_size        
+        self.best_f1 = -1.0                     
+        self.best_model_path = best_model_path
 
-    def preparation(self, X_train, y_train, X_valid, y_valid):
+    def preparation(self, X_train, y_train, X_valid, y_valid, X_test, y_test):
         self.train_set = Dataset(X_train, y_train, self.max_len, self.hidden_size)
         self.valid_set = Dataset(X_valid, y_valid, self.max_len, self.hidden_size)
+        self.test_set = Dataset(X_test, y_test, self.max_len, self.hidden_size)
 
         self.train_loader = DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True)
         self.valid_loader = DataLoader(self.valid_set, batch_size=self.batch_size, shuffle=True)
+        self.test_loader = DataLoader(self.test_set, batch_size=self.batch_size, shuffle=True)
 
         self.optimizer = AdamW(self.model.parameters(), lr=self.learning_rate, correct_bias=False)
         self.scheduler = get_linear_schedule_with_warmup(
@@ -156,6 +155,27 @@ class CNN_Classifier():
         train_loss = np.mean(losses)
         score_dict = get_score(labels, predictions)
         return train_loss, score_dict
+    
+    def train(self):
+        train_table = PrettyTable(['typ', 'epo', 'loss', 'Pre', 'Rec', 'F1', 'Acc'])
+        test_table = PrettyTable(['typ', 'epo', 'loss', 'Pre', 'Rec', 'F1', 'Acc'])
+        for epoch in range(self.epochs):
+            print(f'Epoch {epoch + 1}/{self.epochs}')
+            train_loss, train_score = self.fit()
+            train_table.add_row(["tra", str(epoch+1), format(train_loss, '.4f')] + [train_score[j] for j in train_score])
+            print(train_table)
+
+            val_loss, val_score = self.eval()
+            test_table.add_row(["val", str(epoch+1), format(val_loss, '.4f')] + [val_score[j] for j in val_score])
+            print(test_table)
+            print("\n")
+
+            cur_f1 = float(val_score['F1'])                           
+            if cur_f1 > self.best_f1:                                  
+                self.best_f1 = cur_f1                                   
+                torch.save(self.model, self.best_model_path)            
+                print(f"[Saved] best val F1={self.best_f1:.4f} -> {self.best_model_path}")  
+            print("\n")
 
     def eval(self):
         print("start evaluating...")
@@ -170,34 +190,53 @@ class CNN_Classifier():
             for _, data in progress_bar:
                 vectors = data["vector"].to(self.device)
                 targets = data["targets"].to(self.device)
+
                 outputs = self.model(vectors)
                 loss = self.loss_fn(outputs, targets)
+
                 preds = torch.argmax(outputs, dim=1).flatten()
                 correct_predictions += torch.sum(preds == targets)
 
                 pre += list(np.array(preds.cpu()))
-                label += list(np.array(targets.cpu()))
-                
+                label += list(np.array(targets.cpu()))                
                 losses.append(loss.item())
-                progress_bar.set_description(
-                f'loss: {loss.item():.3f}, acc : {(torch.sum(preds == targets)/len(targets)):.3f}')
+
+                progress_bar.set_description(f'loss: {loss.item():.3f}, acc : {(torch.sum(preds == targets)/len(targets)):.3f}')
+
         val_acc = correct_predictions.double() / len(self.valid_set)
-        print(f"val_acc :", 100 * val_acc.item())
         score_dict = get_score(label, pre)
         val_loss = np.mean(losses)
+        
         return val_loss, score_dict
 
-    
-    def train(self):
-        train_table = PrettyTable(['typ', 'epo', 'loss', 'TPR', 'TNR', 'Pre', 'Rec', 'F1', 'Acc'])
-        test_table = PrettyTable(['typ', 'epo', 'loss', 'TPR', 'TNR', 'Pre', 'Rec', 'F1', 'Acc'])
-        for epoch in range(self.epochs):
-            print(f'Epoch {epoch + 1}/{self.epochs}')
-            train_loss, train_score = self.fit()
-            train_table.add_row(["tra", str(epoch+1), format(train_loss, '.4f')] + [train_score[j] for j in train_score])
-            print(train_table)
+    def test(self):
+        print("start testing...")
+        self.model = self.model.eval()
+        losses = []
+        preds_all = []
+        labels_all = []
+        correct_predictions = 0
+        progress_bar = tqdm(enumerate(self.test_loader), total=len(self.test_loader))
 
-            val_loss, val_score = self.eval()
-            test_table.add_row(["val", str(epoch+1), format(val_loss, '.4f')] + [val_score[j] for j in val_score])
-            print(test_table)
-            print("\n")
+        with torch.no_grad():
+            for _, data in progress_bar:
+                vectors = data["vector"].to(self.device)
+                targets = data["targets"].to(self.device)
+
+                outputs = self.model(vectors)
+                loss = self.loss_fn(outputs, targets)
+
+                preds = torch.argmax(outputs, dim=1).flatten()
+                correct_predictions += torch.sum(preds == targets)
+
+                preds_all += list(preds.cpu().numpy())
+                labels_all += list(targets.cpu().numpy())
+                losses.append(loss.item())
+
+                progress_bar.set_description(f'loss: {loss.item():.3f}, acc : {(torch.sum(preds == targets)/len(targets)):.3f}')
+
+        test_loss = float(np.mean(losses))
+        test_acc = correct_predictions.double() / len(self.test_set)
+        score_dict = get_score(labels_all, preds_all)
+
+        return test_loss, score_dict
