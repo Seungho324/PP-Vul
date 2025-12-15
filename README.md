@@ -3,9 +3,9 @@
 This repository contains the implementation of *PP-Vul*.
 
 ## Requirements
-We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python3.9
+We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python
 
-- Python 3.9
+- Python 3.10
 - SEAL-Python 4.0 (https://github.com/Huelse/SEAL-Python)
 - PyTorch
 
@@ -56,7 +56,7 @@ python split_data.py -i ../dataset/embedding -o ../dataset/1_line
 python classifier.py -i ../dataset/1_line 
 ```
 
-#### 2.2. Inference using homomorphic encrytion
+#### 2.2. Privacy-preserving inference using homomorphic encrytion
 
 ```python
 python main.py -i ../dataset/1_line 
