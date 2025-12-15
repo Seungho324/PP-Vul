@@ -50,13 +50,12 @@ python split_data.py -i ../dataset/embedding -o ../dataset/1_line
 #### 2.1. Model training (HE-friendly)
 
 - Default model: Kernel height = 4, Number of filters = 16, Activation function = $x^3$, Depthwise convolution
-- Move to *pp-vul* folder.
 
 ```python
 python classifier.py -i ../dataset/1_line 
 ```
 
-#### 2.2. Inference using homomorphic encrytion
+#### 2.2. Privacy-preserving inference using homomorphic encrytion
 
 ```python
 python main.py -i ../dataset/1_line 
