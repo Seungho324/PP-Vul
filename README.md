@@ -3,7 +3,7 @@
 This repository contains the implementation of *PP-Vul*.
 
 ## Requirements
-We have confirned that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python
+We have confirmed that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python
 
 - Python 3.10
 - SEAL-Python 4.0 (https://github.com/Huelse/SEAL-Python)
