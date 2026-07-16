@@ -1,6 +1,7 @@
 # PP-Vul: Privacy-Preserving Vulnerability Detection Using Homomorphic Encryption
 
-This repository contains the implementation of *PP-Vul*.
+This repository contains the implementation of ***PP-Vul***, a privacy-preserving vulnerability detection framework that leverages homomorphic encryption. This work was published in the 21st ACM ASIA Conference on Computer and Communications Security (ASIACCS 2026).
+https://dl.acm.org/doi/10.1145/3779208.3785415
 
 ## Requirements
 We have confirmed that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system with python
