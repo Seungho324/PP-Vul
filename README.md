@@ -12,7 +12,7 @@ We have confirmed that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system wi
 
 ## How to use PP-Vul
 
-### 1. Dataset pre-processing
+### 1. Dataset preprocessing
 - The raw dataset of VulCNN can be found at: https://github.com/CGCL-codes/VulCNN/tree/main/dataset
 - The raw dataset of BigVul can be found at: https://github.com/ZeoVan/MSR_20_Code_vulnerability_CSV_Dataset
 - The raw dataset of PrimeVul can be found at: https://github.com/DLVulDet/PrimeVul
