@@ -18,7 +18,7 @@ We have confirmed that PP-Vul can be executed on a 64-bit Ubuntu 18.04 system wi
 - The raw dataset of PrimeVul can be found at: https://github.com/DLVulDet/PrimeVul
 - Normalization code can be found at: https://github.com/CGCL-codes/VulCNN/blob/main/normalization.py
 - For convenience, the preprocessed dataset of VulCNN can be found at: https://drive.usercontent.google.com/download?id=1NGslBtKLA1gUex4tjNWbF01O3sFLSHPD&export=download&authuser=1
-- If you are using the preprocessed dataset, *Dataset pre-precessing* can be skipped.
+- If you are using the preprocessed dataset, *Dataset preprocessing* can be skipped.
   
 #### 1.1. Normalization
 
